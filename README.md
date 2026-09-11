@@ -2,39 +2,51 @@
 
 ## 1. Project Overview
 
-This project implements an end-to-end data engineering pipeline for ASG Airlines. It transforms raw flight, booking, passenger, and payment data into clean, validated, privacy-aware datasets for operational analysis and Power BI reporting.
+This project implements an end-to-end data engineering pipeline for ASG Airlines. It transforms raw flight, booking, passenger, and payment data into clean, validated, privacy-aware datasets for business intelligence and operational reporting.
 
 **Pipeline:**  
 `Ingestion → Quality Assessment → Cleaning → Transformation → PII Protection → Validation → KPI Preparation → Power BI`
 
+---
+
 ## 2. Problem Statement
 
-The raw airline datasets contain data-quality challenges including missing values, duplicates, inconsistent values, timestamp issues, invalid records, and sensitive passenger information.
+The raw airline data contains data-quality challenges such as missing values, duplicates, inconsistent values, problematic timestamps, cross-day flight records, and sensitive passenger information.
 
-The objective is to build a reliable data pipeline that addresses these issues and produces trustworthy data for business analysis.
+The objective is to build a reliable pipeline that resolves these issues and produces trustworthy data for operational analysis and reporting.
+
+---
 
 ## 3. Objectives
 
-- Ingest and assess the provided airline datasets.
+- Ingest and understand the provided airline datasets.
 - Identify and resolve data-quality issues.
-- Standardize and transform the datasets.
-- Handle flight-duration and temporal inconsistencies.
+- Standardize and transform flight, booking, passenger, and payment data.
+- Handle flight-duration and overnight-flight scenarios.
 - Protect sensitive passenger information.
 - Validate data quality and referential integrity.
-- Prepare analytical KPIs.
+- Prepare business KPIs and analytical datasets.
 - Develop an interactive Power BI dashboard.
-- Document the architecture, data flow, data model, and assumptions.
+- Document architecture, data flow, data model, and assumptions.
+
+---
 
 ## 4. Dataset
 
+The project uses four datasets:
+
 | Dataset | Purpose |
 |---|---|
-| Flights | Flight, airline, route and timing information |
-| Bookings | Booking and passenger-flight relationships |
-| Passengers | Passenger information |
-| Payments | Booking payment information |
+| **Flights** | Flight, route, airline and timing information |
+| **Bookings** | Booking and passenger-flight relationships |
+| **Passengers** | Passenger information |
+| **Payments** | Booking payment information |
+
+---
 
 ## 5. Solution Architecture
+
+```text
 Raw CSV Files
       ↓
 Python / Pandas
@@ -47,92 +59,137 @@ Validation
       ↓
 Cleaned Analytical Data
       ↓
-Power BI Dashboard
+Power BI
+      ↓
+Operational Dashboard
+```
 
-6. Data Quality & Transformation
+The solution is implemented locally using Python/Pandas. The architecture can be migrated to Azure Data Factory, Databricks, Spark, or Microsoft Fabric for larger-scale processing.
+
+---
+
+## 6. Data Quality & Transformation
 
 Key processing steps include:
 
-Duplicate detection and removal
-Missing-value handling
-Flight ID validation
-Data standardization
-Timestamp conversion and validation
-Flight-duration calculation
-Overnight-flight handling
-Invalid temporal-record handling
-Referential-integrity validation
-Payment amount validation
+- Removal of exact duplicate records.
+- Validation of flight identifiers.
+- Handling of missing and unknown airline values.
+- Standardization of airline and route values.
+- Conversion and validation of timestamps.
+- Flight-duration calculation.
+- Handling of valid overnight flights.
+- Removal of an invalid temporal flight record.
+- Referential integrity validation.
+- Numeric validation of payment amounts.
 
-Detailed processing logic and validation results are available in the project notebook.
+All transformation decisions are documented in the project notebook.
 
-7. PII Protection
+---
+
+## 7. PII Protection
 
 Sensitive information is protected before analytical use:
 
-Aadhaar → SHA-256 hashing
-Passport number → SHA-256 hashing
-Email → Masking
-Phone → Masking
-Date of birth → Birth year
-Emergency contact details → Removed
+- Aadhaar → SHA-256 hash
+- Passport number → SHA-256 hash
+- Email → Masked
+- Phone → Masked
+- Date of birth → Birth year
+- Emergency contact details → Removed
 
-Raw PII-containing datasets are not included in the repository.
+Raw PII-containing datasets should not be committed to the public repository.
 
-8. Key KPIs
-Total Flights: 1,004
-Average Flight Duration: 2.74 hours
-Total Bookings: 999
-Cancelled Bookings: 314
-Cancellation Rate: 31.43%
-Total Payment Amount: ~₹7.37M
-Route-wise Traffic
-Flights by Airline
-Statistical Duration Anomalies
+---
 
-Traditional flight-delay calculation was not performed because scheduled flight timestamps were not available in the supplied data.
+## 8. Key KPIs
 
-9. Power BI Dashboard
+The solution supports the required KPIs:
 
-The dashboard provides interactive analysis through:
+- **Average Flight Duration:** 2.74 hours
+- **Total Flights:** 1,004
+- **Total Bookings:** 999
+- **Cancelled Bookings:** 314
+- **Cancellation Rate:** 31.43%
+- **Total Payment Amount:** ~₹7.37M
+- Route-wise Traffic
+- Flights by Airline
+- Flight Duration Anomalies
 
-KPI cards
-Flights by Airline
-Average Flight Duration by Airline
-Booking Status Distribution
-Top Routes by Traffic
-Flight Volume by Date
-Airline filtering
-10. Data Model
+Traditional flight-delay calculation is not performed because scheduled timestamps are not available in the supplied data.
+
+---
+
+## 9. Power BI Dashboard
+
+The dashboard provides interactive operational insights through:
+
+- KPI cards
+- Flights by Airline
+- Average Flight Duration by Airline
+- Booking Status Distribution
+- Top Routes by Traffic
+- Flight Volume by Date
+- Airline slicer and interactive filtering
+
+---
+
+## 10. Data Model
+
+The Power BI model uses dedicated dimensions to maintain reliable relationships:
+
+```text
 DimFlightID ──→ Flights
      │
      └────────→ Bookings ←── DimPassenger
                        │
                        ↓
                    Payments
+```
 
-Dedicated dimensions are used to maintain reliable relationships and avoid incorrect aggregations.
+This structure prevents incorrect aggregations caused by one-to-many relationships.
 
-11. Technology Stack
+---
 
-Python · Pandas · Jupyter Notebook · Power BI · GitHub
+## 11. Project Structure
 
-12. Project Structure
-ASG-AIRLINES-ANALYTICS-PIPELINE/
+```text
+ASG-Airlines-Data-Engineering/
 │
 ├── README.md
-├── ASSIGNMENT_NEOSTAT.ipynb
-├── cleaned_data/
+├── notebooks/
+│   └── ASSIGNMENT_NEOSTAT.ipynb
+├── data/
+│   └── cleaned/
 ├── powerbi/
-└── docs/
-13. Deliverables
-Data engineering notebook
-Cleaned analytical datasets
-Power BI dashboard
-Dashboard screenshot
-Architecture and data-flow documentation
-Data model
-Assumptions and transformation documentation
-14. Conclusion
+│   ├── ASG_Airlines_Dashboard.pbix
+│   └── dashboard_screenshot.png
+├── docs/
+│   ├── architecture.png
+│   ├── data_flow_diagram.png
+│   └── data_model.png
+└── .gitignore
+```
 
-The project delivers a validated and privacy-aware data pipeline for ASG Airlines, enabling reliable operational analysis through Power BI while following data-quality, modelling, and governance practices.
+---
+
+## 12. Technology Stack
+
+**Python · Pandas · Jupyter Notebook · Power BI · GitHub**
+
+---
+
+## 13. Deliverables
+
+- Working data engineering notebook
+- Cleaned analytical datasets
+- Power BI dashboard
+- Dashboard screenshot
+- Architecture, DFD and data model
+- Project documentation and assumptions
+
+---
+
+## 14. Conclusion
+
+The project delivers a validated and privacy-aware analytical pipeline for ASG Airlines, enabling reliable operational insights through Power BI while maintaining clear data-quality, modelling, and governance practices.
