@@ -35,8 +35,6 @@ The objective is to build a reliable data pipeline that addresses these issues a
 | Payments | Booking payment information |
 
 ## 5. Solution Architecture
-
-```text
 Raw CSV Files
       ↓
 Python / Pandas
@@ -138,11 +136,3 @@ Assumptions and transformation documentation
 14. Conclusion
 
 The project delivers a validated and privacy-aware data pipeline for ASG Airlines, enabling reliable operational analysis through Power BI while following data-quality, modelling, and governance practices.
-
-
-Then scroll to the bottom and click **Commit changes**.
-
-For the commit message, use:
-
-```text
-Add project documentation
